@@ -24,20 +24,17 @@ class Category(
 
     constructor(name: String) : this(name, Hierarchy(), false)
 
-    fun updateRootCategory(rootCategory: Category) {
-        hierarchy.updateRootCategory(rootCategory)
-    }
-
-    fun updateParentCategory(parentCategory: Category) {
-        hierarchy.updateParentCategory(parentCategory)
+    fun createRootCategory(rootCategory: Category) {
+        hierarchy.createRootCategory(rootCategory)
     }
 
     fun createSubCategory(subCategory: Category) {
-        hierarchy.createSubCategory(subCategory)
+        hierarchy.createSubCategory(this, subCategory.hierarchy)
     }
 
-    fun updateCategoryName(name: String) {
-        this.name = name
+    fun updateSubCategory(name: String, subCategory: Category) {
+        subCategory.name = name
+        hierarchy.updateSubCategory(this, subCategory.hierarchy)
     }
 
     fun getRootCategory() = hierarchy.getRootCategory()

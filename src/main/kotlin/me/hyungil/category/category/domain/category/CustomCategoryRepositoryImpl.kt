@@ -9,7 +9,7 @@ class CustomCategoryRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory
 ) : CustomCategoryRepository {
 
-    override fun findByIdWithRootCategory(id: Long): Category? =
+    override fun findByIdWithRootCategory(id: Long?): Category? =
         jpaQueryFactory.selectFrom(category)
             .innerJoin(category.hierarchy.rootCategory)
             .fetchJoin()

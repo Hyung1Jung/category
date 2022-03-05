@@ -23,10 +23,14 @@ class CategoryService(
 
     @Transactional
     fun updateCategory(id: Long, request: UpdateCategoryRequest): GetCategoryResponse {
-        val category = findById(id)
-        category.updateCategoryName(request.name)
+        val parentCategory = findByIdWithRootCategory(request.parentCategoryId)
 
-        return GetCategoryResponse.from(category)
+        val subCategory = findById(id)
+
+        parentCategory.updateSubCategory(request.name, subCategory)
+        categoryRepository.adjustHierarchyOrders(subCategory)
+
+        return GetCategoryResponse.from(subCategory)
     }
 
     @Transactional
@@ -35,14 +39,15 @@ class CategoryService(
         return categoryRepository.deleteChildCategories(category)
     }
 
-    private fun createSubCategory(request: CreateCategoryRequest): GetCategoryResponse {
-        val parentCategory = findById(request.parentCategoryId)
-        val rootCategory = findByIdWithRootCategory(parentCategory.id)
+    private fun createRootCategory(request: CreateCategoryRequest): GetCategoryResponse {
+        val createCategory = Category(request.name)
 
-        val createSubCategory = Category(request.name).apply {
-            updateRootCategory(rootCategory)
-            updateParentCategory(parentCategory)
-        }
+        return GetCategoryResponse.from(categoryRepository.save(createCategory).apply { createRootCategory(this) })
+    }
+
+    private fun createSubCategory(request: CreateCategoryRequest): GetCategoryResponse {
+        val parentCategory = findByIdWithRootCategory(request.parentCategoryId)
+        val createSubCategory = Category(request.name)
 
         parentCategory.createSubCategory(createSubCategory)
         categoryRepository.adjustHierarchyOrders(createSubCategory)
@@ -50,16 +55,10 @@ class CategoryService(
         return GetCategoryResponse.from(categoryRepository.save(createSubCategory))
     }
 
-    private fun createRootCategory(request: CreateCategoryRequest): GetCategoryResponse {
-        val createRootCategory = Category(request.name)
-
-        return GetCategoryResponse.from(categoryRepository.save(createRootCategory).apply { updateRootCategory(this) })
-    }
-
     private fun findById(id: Long?): Category =
         categoryRepository.findByIdOrNull(id) ?: throw PostNotFoundException(NOT_FOUND_PARENT_CATEGORY.message)
 
-    private fun findByIdWithRootCategory(id: Long) =
+    private fun findByIdWithRootCategory(id: Long?) =
         categoryRepository.findByIdWithRootCategory(id)
             ?: throw PostNotFoundException(NOT_FOUND_PARENT_CATEGORY.message)
 }
