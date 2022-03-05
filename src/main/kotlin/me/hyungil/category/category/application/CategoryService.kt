@@ -29,6 +29,12 @@ class CategoryService(
         return GetCategoryResponse.from(category)
     }
 
+    @Transactional
+    fun deleteCategory(id: Long) {
+        val category = findById(id)
+        return categoryRepository.deleteChildCategories(category)
+    }
+
     private fun createSubCategory(request: CreateCategoryRequest): GetCategoryResponse {
         val parentCategory = findById(request.parentCategoryId)
         val rootCategory = findByIdWithRootCategory(parentCategory.id)

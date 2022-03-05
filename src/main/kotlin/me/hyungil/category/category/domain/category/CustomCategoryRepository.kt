@@ -5,4 +5,6 @@ interface CustomCategoryRepository {
     fun findByIdWithRootCategory(id: Long): Category?
 
     fun adjustHierarchyOrders(newCategory: Category)
+
+    fun deleteChildCategories(parentCategory: Category)
 }

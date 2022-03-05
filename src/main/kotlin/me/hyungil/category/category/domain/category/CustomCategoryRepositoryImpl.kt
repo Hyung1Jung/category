@@ -33,4 +33,19 @@ class CustomCategoryRepositoryImpl(
             )
             .execute()
     }
+
+    override fun deleteChildCategories(parentCategory: Category) {
+        jpaQueryFactory.update(category)
+            .set(category.isDeleted, true)
+            .where(
+                category.id.eq(parentCategory.id).or(
+                    category.hierarchy.leftNode.gt(parentCategory.getLeftNode())
+                        .and(
+                            category.hierarchy.rightNode.lt(parentCategory.getRightNode())
+                                .and(category.hierarchy.rootCategory.eq(parentCategory.getRootCategory()))
+                        )
+                )
+            )
+            .execute()
+    }
 }
