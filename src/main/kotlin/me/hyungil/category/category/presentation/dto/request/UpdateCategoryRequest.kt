@@ -4,6 +4,8 @@ import javax.validation.constraints.NotBlank
 
 data class UpdateCategoryRequest(
 
+    val parentCategoryId: Long,
+
     @field:NotBlank(message = "잘못된 정보를 입력하셨습니다.")
     val name: String
 )

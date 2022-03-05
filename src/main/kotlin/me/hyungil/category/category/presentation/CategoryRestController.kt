@@ -16,7 +16,10 @@ class CategoryRestController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createCategory(@RequestBody @Valid request: CreateCategoryRequest) = categoryService.createCategory(request)
 
-    @PatchMapping("{id}")
+    @PutMapping("{id}")
     fun updateCategory(@PathVariable id: Long, @RequestBody @Valid request: UpdateCategoryRequest) =
         categoryService.updateCategory(id, request)
+
+    @DeleteMapping("{id}")
+    fun deleteCategory(@PathVariable id: Long) = categoryService.deleteCategory(id)
 }

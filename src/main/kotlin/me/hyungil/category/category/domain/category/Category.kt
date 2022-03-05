@@ -10,7 +10,10 @@ class Category(
     var name: String,
 
     @Embedded
-    val hierarchy: Hierarchy = Hierarchy(),
+    val hierarchy: Hierarchy,
+
+    @Column(nullable = false)
+    val isDeleted: Boolean,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,20 +22,19 @@ class Category(
 
 ) : BaseTimeEntity() {
 
-    fun updateRootCategory(rootCategory: Category) {
-        hierarchy.updateRootCategory(rootCategory)
-    }
+    constructor(name: String) : this(name, Hierarchy(), false)
 
-    fun updateParentCategory(parentCategory: Category) {
-        hierarchy.updateParentCategory(parentCategory)
+    fun createRootCategory(rootCategory: Category) {
+        hierarchy.createRootCategory(rootCategory)
     }
 
     fun createSubCategory(subCategory: Category) {
-        hierarchy.createSubCategory(subCategory)
+        hierarchy.createSubCategory(this, subCategory.hierarchy)
     }
 
-    fun updateCategoryName(name: String) {
-        this.name = name
+    fun updateSubCategory(name: String, subCategory: Category) {
+        subCategory.name = name
+        hierarchy.updateSubCategory(this, subCategory.hierarchy)
     }
 
     fun getRootCategory() = hierarchy.getRootCategory()
