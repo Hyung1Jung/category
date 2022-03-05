@@ -23,7 +23,7 @@ class Hierarchy {
     @Column(nullable = false)
     private var depth: Int = 1
 
-    fun updateUpdateSubCategory(subCategory: Category) {
+    fun createSubCategory(subCategory: Category) {
         subCategory.hierarchy.rootCategory = this.rootCategory
         subCategory.hierarchy.depth += 1
         subCategory.hierarchy.leftNode = this.rightNode
@@ -38,5 +38,8 @@ class Hierarchy {
         this.parentCategory = parentCategory
     }
 
+    fun getRootCategory() = rootCategory
     fun getDepth() = depth
+    fun getLeftNode() = leftNode
+    fun getRightNode() = rightNode
 }

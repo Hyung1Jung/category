@@ -4,7 +4,8 @@ import me.hyungil.category.category.commom.enumeration.ExceptionType.NOT_FOUND_P
 import me.hyungil.category.category.commom.exception.PostNotFoundException
 import me.hyungil.category.category.domain.category.Category
 import me.hyungil.category.category.domain.category.CategoryRepository
-import me.hyungil.category.category.presentation.dto.request.CategoryCreateRequest
+import me.hyungil.category.category.presentation.dto.request.CreateCategoryRequest
+import me.hyungil.category.category.presentation.dto.request.UpdateCategoryRequest
 import me.hyungil.category.category.presentation.dto.response.GetCategoryResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -15,12 +16,20 @@ class CategoryService(
     private val categoryRepository: CategoryRepository
 ) {
     @Transactional
-    fun createCategory(request: CategoryCreateRequest) = when (request.parentCategoryId) {
+    fun createCategory(request: CreateCategoryRequest) = when (request.parentCategoryId) {
         null, 0L -> createRootCategory(request)
         else -> createSubCategory(request)
     }
 
-    private fun createSubCategory(request: CategoryCreateRequest): GetCategoryResponse {
+    @Transactional
+    fun updateCategory(id: Long, request: UpdateCategoryRequest): GetCategoryResponse {
+        val category = findById(id)
+        category.updateCategoryName(request.name)
+
+        return GetCategoryResponse.from(category)
+    }
+
+    private fun createSubCategory(request: CreateCategoryRequest): GetCategoryResponse {
         val parentCategory = findById(request.parentCategoryId)
         val rootCategory = findByIdWithRootCategory(parentCategory.id)
 
@@ -29,12 +38,13 @@ class CategoryService(
             updateParentCategory(parentCategory)
         }
 
-        parentCategory.updateSubCategory(createSubCategory)
+        parentCategory.createSubCategory(createSubCategory)
+        categoryRepository.adjustHierarchyOrders(createSubCategory)
 
         return GetCategoryResponse.from(categoryRepository.save(createSubCategory))
     }
 
-    private fun createRootCategory(request: CategoryCreateRequest): GetCategoryResponse {
+    private fun createRootCategory(request: CreateCategoryRequest): GetCategoryResponse {
         val createRootCategory = Category(request.name)
 
         return GetCategoryResponse.from(categoryRepository.save(createRootCategory).apply { updateRootCategory(this) })

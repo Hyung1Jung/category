@@ -7,7 +7,7 @@ import javax.persistence.*
 @Entity
 class Category(
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Embedded
     val hierarchy: Hierarchy = Hierarchy(),
@@ -27,9 +27,16 @@ class Category(
         hierarchy.updateParentCategory(parentCategory)
     }
 
-    fun updateSubCategory(subCategory: Category) {
-        hierarchy.updateUpdateSubCategory(subCategory)
+    fun createSubCategory(subCategory: Category) {
+        hierarchy.createSubCategory(subCategory)
     }
 
+    fun updateCategoryName(name: String) {
+        this.name = name
+    }
+
+    fun getRootCategory() = hierarchy.getRootCategory()
     fun getDepth() = hierarchy.getDepth()
+    fun getLeftNode() = hierarchy.getLeftNode()
+    fun getRightNode() = hierarchy.getRightNode()
 }
