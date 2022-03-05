@@ -1,7 +1,8 @@
 package me.hyungil.category.category.presentation
 
 import me.hyungil.category.category.application.CategoryService
-import me.hyungil.category.category.presentation.dto.request.CategoryCreateRequest
+import me.hyungil.category.category.presentation.dto.request.CreateCategoryRequest
+import me.hyungil.category.category.presentation.dto.request.UpdateCategoryRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -13,5 +14,9 @@ class CategoryRestController(
 ) {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createCategory(@RequestBody @Valid request: CategoryCreateRequest) = categoryService.createCategory(request)
+    fun createCategory(@RequestBody @Valid request: CreateCategoryRequest) = categoryService.createCategory(request)
+
+    @PatchMapping("{id}")
+    fun updateCategory(@PathVariable id: Long, @RequestBody @Valid request: UpdateCategoryRequest) =
+        categoryService.updateCategory(id, request)
 }
