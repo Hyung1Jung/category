@@ -11,9 +11,20 @@ data class GetCategoryResponse(
 
     val depth: Int,
 
-    val createDate: LocalDateTime
+    val createDate: LocalDateTime,
+
+    val parentCategory: Long?,
+
+    val rootCategory: Long?
 ) {
     companion object {
-        fun from(category: Category) = GetCategoryResponse(category.id, category.name, category.getDepth(), category.createdDate)
+        fun from(category: Category) = GetCategoryResponse(
+            category.id,
+            category.name,
+            category.getDepth(),
+            category.createdDate,
+            category.getParentCategoryId(),
+            category.getRootCategoryId()
+        )
     }
 }
