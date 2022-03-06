@@ -63,8 +63,7 @@ class CategoryService(
     @CacheEvict(allEntries = true)
     fun deleteCategory(id: Long) {
         val category = findById(id)
-
-        return categoryRepository.deleteCategory(category)
+        categoryRepository.deleteCategory(category)
     }
 
     private fun createRootCategory(request: CreateCategoryRequest): GetCategoryResponse {

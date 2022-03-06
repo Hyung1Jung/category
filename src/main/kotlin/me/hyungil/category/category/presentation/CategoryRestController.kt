@@ -29,5 +29,7 @@ class CategoryRestController(
     }
 
     @DeleteMapping("/{id}")
-    fun deleteCategory(@PathVariable id: Long) = categoryService.deleteCategory(id)
+    fun deleteCategory(@PathVariable id: Long) {
+        categoryService.deleteCategory(id)
+    }
 }
