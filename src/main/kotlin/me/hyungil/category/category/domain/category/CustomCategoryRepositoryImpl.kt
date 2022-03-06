@@ -1,7 +1,9 @@
 package me.hyungil.category.category.domain.category
 
+import com.querydsl.core.types.Projections
 import com.querydsl.jpa.impl.JPAQueryFactory
 import me.hyungil.category.category.domain.category.QCategory.category
+import me.hyungil.category.category.presentation.dto.response.GetCategoryResponse
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -34,9 +36,8 @@ class CustomCategoryRepositoryImpl(
             .execute()
     }
 
-    override fun deleteChildCategories(parentCategory: Category) {
-        jpaQueryFactory.update(category)
-            .set(category.isDeleted, true)
+    override fun deleteCategory(parentCategory: Category) {
+        jpaQueryFactory.delete(category)
             .where(
                 category.id.eq(parentCategory.id).or(
                     category.hierarchy.leftNode.gt(parentCategory.getLeftNode())
@@ -47,5 +48,29 @@ class CustomCategoryRepositoryImpl(
                 )
             )
             .execute()
+    }
+
+    override fun getCategories(parentCategory: Category): List<GetCategoryResponse>? {
+        return jpaQueryFactory.select(
+            Projections.constructor(
+                GetCategoryResponse::class.java,
+                category.id,
+                category.name,
+                category.hierarchy.depth,
+                category.createdDate,
+                category.hierarchy.parentCategory.id,
+                category.hierarchy.rootCategory.id
+            )
+        )
+            .from(category)
+            .where(
+                category.id.eq(parentCategory.id).or(
+                    category.hierarchy.leftNode.gt(parentCategory.getLeftNode())
+                        .and(
+                            category.hierarchy.rightNode.lt(parentCategory.getRightNode())
+                                .and(category.hierarchy.rootCategory.eq(parentCategory.getRootCategory()))
+                        )
+                )
+            ).fetch()
     }
 }

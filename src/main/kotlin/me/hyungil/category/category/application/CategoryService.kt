@@ -7,6 +7,8 @@ import me.hyungil.category.category.domain.category.CategoryRepository
 import me.hyungil.category.category.presentation.dto.request.CreateCategoryRequest
 import me.hyungil.category.category.presentation.dto.request.UpdateCategoryRequest
 import me.hyungil.category.category.presentation.dto.response.GetCategoryResponse
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,22 +23,35 @@ class CategoryService(
         else -> createSubCategory(request)
     }
 
-    @Transactional
-    fun updateCategory(id: Long, request: UpdateCategoryRequest): GetCategoryResponse {
-        val parentCategory = findByIdWithRootCategory(request.parentCategoryId)
-
-        val subCategory = findById(id)
-
-        parentCategory.updateSubCategory(request.name, subCategory)
-        categoryRepository.adjustHierarchyOrders(subCategory)
-
-        return GetCategoryResponse.from(subCategory)
+    @Transactional(readOnly = true)
+    @Cacheable(value = ["getCategories"])
+    fun getCategories(id: Long): List<GetCategoryResponse>? {
+        val parentCategory = findById(id)
+        return categoryRepository.getCategories(parentCategory)
     }
 
     @Transactional
+    @CacheEvict(allEntries = true)
+    fun updateCategory(id: Long, request: UpdateCategoryRequest) {
+
+        if (request.parentCategoryId == null || request.parentCategoryId == 0L) {
+            val subCategory = findById(id)
+            subCategory.updateCategoryName(request.name)
+        } else {
+            val parentCategory = findByIdWithRootCategory(request.parentCategoryId)
+            val subCategory = findById(id)
+
+            subCategory.updateCategoryName(request.name)
+            parentCategory.updateSubCategory(subCategory)
+            categoryRepository.adjustHierarchyOrders(subCategory)
+        }
+    }
+
+    @Transactional
+    @CacheEvict(allEntries = true)
     fun deleteCategory(id: Long) {
         val category = findById(id)
-        return categoryRepository.deleteChildCategories(category)
+        return categoryRepository.deleteCategory(category)
     }
 
     private fun createRootCategory(request: CreateCategoryRequest): GetCategoryResponse {

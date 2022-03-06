@@ -6,14 +6,13 @@ import javax.persistence.*
 
 @Entity
 class Category(
+
     @Column(nullable = false)
     var name: String,
 
     @Embedded
-    val hierarchy: Hierarchy,
-
     @Column(nullable = false)
-    val isDeleted: Boolean,
+    val hierarchy: Hierarchy,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +21,7 @@ class Category(
 
 ) : BaseTimeEntity() {
 
-    constructor(name: String) : this(name, Hierarchy(), false)
+    constructor(name: String) : this(name, Hierarchy())
 
     fun createRootCategory(rootCategory: Category) {
         hierarchy.createRootCategory(rootCategory)
@@ -32,12 +31,17 @@ class Category(
         hierarchy.createSubCategory(this, subCategory.hierarchy)
     }
 
-    fun updateSubCategory(name: String, subCategory: Category) {
-        subCategory.name = name
+    fun updateSubCategory(subCategory: Category) {
         hierarchy.updateSubCategory(this, subCategory.hierarchy)
     }
 
+    fun updateCategoryName(name: String) {
+        this.name = name
+    }
+
     fun getRootCategory() = hierarchy.getRootCategory()
+    fun getParentCategoryId() = hierarchy.getParentCategoryId()
+    fun getRootCategoryId() = hierarchy.getRootCategoryId()
     fun getDepth() = hierarchy.getDepth()
     fun getLeftNode() = hierarchy.getLeftNode()
     fun getRightNode() = hierarchy.getRightNode()
