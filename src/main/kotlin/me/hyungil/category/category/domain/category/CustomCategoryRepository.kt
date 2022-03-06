@@ -4,11 +4,13 @@ import me.hyungil.category.category.presentation.dto.response.GetCategoryRespons
 
 interface CustomCategoryRepository {
 
-    fun findByIdWithRootCategory(id: Long?): Category?
+    fun getCategories(parentCategory: Category) : List<GetCategoryResponse>
 
-    fun adjustHierarchyOrders(newCategory: Category)
+    fun getAllCategories(): List<GetCategoryResponse>
+
+    fun findByIdWithRootCategory(id: Long?): Category?
 
     fun deleteCategory(parentCategory: Category)
 
-    fun getCategories(parentCategory: Category) : List<GetCategoryResponse>?
+    fun adjustHierarchyOrders(newCategory: Category)
 }

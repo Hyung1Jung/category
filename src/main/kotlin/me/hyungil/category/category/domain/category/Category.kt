@@ -14,6 +14,9 @@ class Category(
     @Column(nullable = false)
     val hierarchy: Hierarchy,
 
+    @Column(nullable = false)
+    val isDeleted: Boolean,
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
@@ -21,7 +24,7 @@ class Category(
 
 ) : BaseTimeEntity() {
 
-    constructor(name: String) : this(name, Hierarchy())
+    constructor(name: String) : this(name, Hierarchy(), false)
 
     fun createRootCategory(rootCategory: Category) {
         hierarchy.createRootCategory(rootCategory)
