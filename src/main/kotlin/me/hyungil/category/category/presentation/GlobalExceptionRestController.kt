@@ -1,6 +1,7 @@
 package me.hyungil.category.category.presentation
 
-import me.hyungil.category.category.commom.exception.PostNotFoundException
+import me.hyungil.category.category.commom.exception.CategoryNotFoundException
+import me.hyungil.category.category.commom.exception.InternalServerErrorException
 import me.hyungil.category.category.presentation.dto.ErrorResponse
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -21,11 +22,16 @@ class GlobalExceptionRestController {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(exception: MethodArgumentNotValidException): ErrorResponse? {
         val message = exception.bindingResult.fieldError!!.defaultMessage
-        return message?.let { ErrorResponse.of(it) }.also { logger.debug(exception.message, exception) }
+        return message?.let { ErrorResponse.of(it) }.also { logger.debug(it, exception) }
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(PostNotFoundException::class)
-    fun handlePostNotFoundException(exception: PostNotFoundException) =
-        exception.message?.let { ErrorResponse.of(it) }.also { logger.debug(exception.message, exception) }
+    @ExceptionHandler(CategoryNotFoundException::class)
+    fun handleCategoryNotFoundException(exception: CategoryNotFoundException) =
+        exception.message?.let { ErrorResponse.of(it) }.also { logger.debug(it, exception) }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(InternalServerErrorException::class)
+    fun handleInternalServerErrorException(exception: InternalServerErrorException) =
+        exception.message?.let { ErrorResponse.of(it) }.also { logger.debug(it, exception) }
 }
