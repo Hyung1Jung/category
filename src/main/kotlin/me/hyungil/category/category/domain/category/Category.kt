@@ -19,7 +19,7 @@ class Category(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
+    @Column(name = "category_id", nullable = false)
     val id: Long = 0L
 
 ) : BaseTimeEntity() {
