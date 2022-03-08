@@ -54,11 +54,17 @@ dependencies {
     implementation("io.springfox:springfox-swagger-ui:2.9.2")
     implementation("io.springfox:springfox-swagger2:2.9.2")
 
+    implementation("org.flywaydb:flyway-core")
+
     kapt("com.querydsl:querydsl-apt:4.4.0:jpa")
 
-    runtimeOnly ("com.h2database:h2")
+    runtimeOnly("com.h2database:h2")
 
+    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("io.kotest:kotest-runner-junit5:5.0.2")
+    testImplementation("io.kotest:kotest-assertions-core:5.0.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.rest-assured:rest-assured:4.3.3")
 }
 
 tasks.withType<KotlinCompile> {

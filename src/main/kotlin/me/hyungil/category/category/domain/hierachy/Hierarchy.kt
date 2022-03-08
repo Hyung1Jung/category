@@ -8,20 +8,20 @@ class Hierarchy {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "root_category_id")
-    private var rootCategory: Category ?= null
+    private var rootCategory: Category? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id")
-    private var parentCategory: Category ?= null
+    private var parentCategory: Category? = null
 
     @Column(nullable = false)
-    private var leftNode: Int = 1
+    private var leftNode: Long = 1L
 
     @Column(nullable = false)
-    private var rightNode: Int = 2
+    private var rightNode: Long = 2L
 
     @Column(nullable = false)
-    private var depth: Int = 1
+    private var depth: Long = 1L
 
     fun createRootCategory(rootCategory: Category) {
         this.rootCategory = rootCategory
@@ -31,23 +31,20 @@ class Hierarchy {
         subCategoryHierarchy.parentCategory = parentCategory
         subCategoryHierarchy.rootCategory = this.rootCategory
         subCategoryHierarchy.leftNode = this.rightNode
-        subCategoryHierarchy.rightNode = this.rightNode + 1
-        subCategoryHierarchy.depth =  this.depth + 1
+        subCategoryHierarchy.rightNode = this.rightNode + 1L
+        subCategoryHierarchy.depth = this.depth + 1L
     }
 
     fun updateSubCategory(parentCategory: Category, subCategoryHierarchy: Hierarchy) {
         subCategoryHierarchy.parentCategory = parentCategory
         subCategoryHierarchy.rootCategory = this.rootCategory
         subCategoryHierarchy.leftNode = this.rightNode
-        subCategoryHierarchy.rightNode = this.rightNode + 1
-        subCategoryHierarchy.depth =  this.depth + 1
-        this.rightNode += 2
+        subCategoryHierarchy.rightNode += this.leftNode * 2 + 1L
+        subCategoryHierarchy.depth = this.depth + 1L
     }
 
+    fun setRightNode(subRightNode: Long) {this.rightNode = subRightNode * 2}
     fun getRootCategory() = rootCategory
-    fun getRootCategoryId() = rootCategory?.id
-    fun getParentCategoryId() = parentCategory?.id
-    fun getDepth() = depth
     fun getLeftNode() = leftNode
     fun getRightNode() = rightNode
 }

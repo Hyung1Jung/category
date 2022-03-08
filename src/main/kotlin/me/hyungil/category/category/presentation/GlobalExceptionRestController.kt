@@ -2,7 +2,7 @@ package me.hyungil.category.category.presentation
 
 import me.hyungil.category.category.commom.exception.CategoryNotFoundException
 import me.hyungil.category.category.commom.exception.InternalServerErrorException
-import me.hyungil.category.category.presentation.dto.ErrorResponse
+import me.hyungil.category.category.presentation.dto.response.ErrorResponse
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.springframework.http.HttpStatus
