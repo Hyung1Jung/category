@@ -1,7 +1,8 @@
 package me.hyungil.category.category.domain.category
 
-import me.hyungil.category.category.domain.BaseTimeEntity
+import me.hyungil.category.category.domain.data.BaseTimeEntity
 import me.hyungil.category.category.domain.hierachy.Hierarchy
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -40,12 +41,10 @@ class Category(
 
     fun updateCategoryName(name: String) {
         this.name = name
+        this.modifiedDate = LocalDateTime.now()
     }
 
     fun getRootCategory() = hierarchy.getRootCategory()
-    fun getParentCategoryId() = hierarchy.getParentCategoryId()
-    fun getRootCategoryId() = hierarchy.getRootCategoryId()
-    fun getDepth() = hierarchy.getDepth()
     fun getLeftNode() = hierarchy.getLeftNode()
     fun getRightNode() = hierarchy.getRightNode()
 }

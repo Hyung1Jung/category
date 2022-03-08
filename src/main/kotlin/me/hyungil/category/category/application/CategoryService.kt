@@ -1,7 +1,6 @@
 package me.hyungil.category.category.application
 
 import me.hyungil.category.category.commom.exception.CategoryNotFoundException
-import me.hyungil.category.category.commom.exception.InternalServerErrorException
 import me.hyungil.category.category.domain.category.Category
 import me.hyungil.category.category.domain.category.CategoryRepository
 import me.hyungil.category.category.presentation.dto.request.CreateCategoryRequest
@@ -23,13 +22,13 @@ class CategoryService(
     @Cacheable(value = ["getCategories"])
     fun getCategories(id: Long): List<GetCategoryResponse>? {
         val parentCategory = findById(id)
-
         return categoryRepository.getCategories(parentCategory)
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = ["getAllCategories"])
     fun getAllCategories(): List<GetCategoryResponse> = categoryRepository.getAllCategories()
+
 
     @Transactional
     @CacheEvict(allEntries = true)
@@ -41,23 +40,10 @@ class CategoryService(
     @Transactional
     @CacheEvict(allEntries = true)
     fun updateCategory(id: Long, request: UpdateCategoryRequest) {
-
-        if (request.parentCategoryId == null || request.parentCategoryId == 0L) {
-            val subCategory = findById(id)
-            subCategory.updateCategoryName(request.name)
-        } else {
-            val parentCategory = findByIdWithRootCategory(request.parentCategoryId)
-            val subCategory = findById(id)
-
-            try {
-                subCategory.updateCategoryName(request.name)
-                parentCategory.updateSubCategory(subCategory)
-                categoryRepository.adjustHierarchyOrders(subCategory)
-            } catch (exception: Exception) {
-                throw InternalServerErrorException()
-            }
-        }
+        val subCategory = findById(id)
+        subCategory.updateCategoryName(request.name)
     }
+
 
     @Transactional
     @CacheEvict(allEntries = true)
@@ -66,24 +52,23 @@ class CategoryService(
         categoryRepository.deleteCategory(category)
     }
 
-    private fun createRootCategory(request: CreateCategoryRequest): GetCategoryResponse {
+    private fun createRootCategory(request: CreateCategoryRequest): Long {
         val createCategory = Category(request.name)
+        val newCategory = categoryRepository.save(createCategory).apply { createRootCategory(this) }
 
-        return GetCategoryResponse.from(categoryRepository.save(createCategory).apply { createRootCategory(this) })
+        return newCategory.id
     }
 
-    private fun createSubCategory(request: CreateCategoryRequest): GetCategoryResponse {
+    private fun createSubCategory(request: CreateCategoryRequest): Long {
         val parentCategory = findByIdWithRootCategory(request.parentCategoryId)
+        val createSubCategory = Category(request.name)
 
-        try {
-            val createSubCategory = Category(request.name)
-            parentCategory.createSubCategory(createSubCategory)
-            categoryRepository.adjustHierarchyOrders(createSubCategory)
+        parentCategory.createSubCategory(createSubCategory)
+        categoryRepository.adjustHierarchyOrders(createSubCategory)
 
-            return GetCategoryResponse.from(categoryRepository.save(createSubCategory))
-        } catch (exception: Exception) {
-            throw InternalServerErrorException()
-        }
+        val newCategory = categoryRepository.save(createSubCategory)
+
+        return newCategory.id
     }
 
     private fun findById(id: Long?): Category =
