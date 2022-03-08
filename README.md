@@ -12,10 +12,15 @@ java17, SpringBoot 2.5.6, H2 Database, Gradle, Kotlin, flywaydb, Spring Data JPA
 2. `./gradlew build`
 3. `java -jar ./build/libs/category-0.0.1-SNAPSHOT.jar`
 
+<img width="891" alt="스크린샷 2022-03-09 오전 7 31 44" src="https://user-images.githubusercontent.com/43127088/157337203-1aedba0b-f4cd-4930-b561-148e176b4b52.png">
+<img width="895" alt="스크린샷 2022-03-09 오전 7 32 00" src="https://user-images.githubusercontent.com/43127088/157337253-e5c35152-f4d8-495b-91c3-bf84864f78b8.png">
+
+
 또는 
 
-1. [category-0.0.1-SNAPSHOT.jar]() 설치 후에, 
+1. [category-0.0.1-SNAPSHOT.jar](https://github.com/Hyung1Jung/category/blob/develop/libs/category-0.0.1-SNAPSHOT.jar) 설치 후에, 
 2. 설치한 경로에서 `java -jar category-0.0.1-SNAPSHOT.jar`
+
 
 # API Doc
 `http://localhost:8081/swagger-ui.html`
