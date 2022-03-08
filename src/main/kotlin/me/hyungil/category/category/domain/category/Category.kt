@@ -35,10 +35,6 @@ class Category(
         hierarchy.createSubCategory(this, subCategory.hierarchy)
     }
 
-    fun updateSubCategory(subCategory: Category) {
-        hierarchy.updateSubCategory(this, subCategory.hierarchy)
-    }
-
     fun updateCategoryName(name: String) {
         this.name = name
         this.modifiedDate = LocalDateTime.now()

@@ -35,15 +35,6 @@ class Hierarchy {
         subCategoryHierarchy.depth = this.depth + 1L
     }
 
-    fun updateSubCategory(parentCategory: Category, subCategoryHierarchy: Hierarchy) {
-        subCategoryHierarchy.parentCategory = parentCategory
-        subCategoryHierarchy.rootCategory = this.rootCategory
-        subCategoryHierarchy.leftNode = this.rightNode
-        subCategoryHierarchy.rightNode += this.leftNode * 2 + 1L
-        subCategoryHierarchy.depth = this.depth + 1L
-    }
-
-    fun setRightNode(subRightNode: Long) {this.rightNode = subRightNode * 2}
     fun getRootCategory() = rootCategory
     fun getLeftNode() = leftNode
     fun getRightNode() = rightNode

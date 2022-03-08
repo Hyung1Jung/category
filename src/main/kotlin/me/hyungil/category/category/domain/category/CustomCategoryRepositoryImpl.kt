@@ -102,29 +102,4 @@ class CustomCategoryRepositoryImpl(
             )
             .execute()
     }
-    /*
-    만약 카테고리의 위치도 변경하는 API를 만든다면 하위 카테고리들까지 모두 이동시킬 때
-    1. rightNode - leftNode == 1이면 카테고리가 존재하지 않도록,
-    2. rightNode - leftNode != 1이면 하위 카테고리리 존재하도록,
-    3. 어떤 특정한 카테고리에 하위 카테고리를 삽입하면, 해당 하위 노드의 leftNode는 상위 카테고리의 rightNode가 되고 rightNode는 상위 카테고리의 rightNode + 1이 되도록
-
-    하는 위 3가지의 조건을 만족하는 기능을 아주 간단한 로직 + 쿼리로 구현해보고 싶은 욕심이 있는데 고민이 조금 더 필요할 것 같습니다.
-
-    override fun updateCategory(parentCategory: Category) {
-        jpaQueryFactory.update(category)
-            .set(category.hierarchy.leftNode, category.hierarchy.leftNode.add(parentCategory.getRightNode() + 1L))
-            .set(category.hierarchy.rightNode, parentCategory.getRightNode() * 2)
-            .set(category.hierarchy.rightNode, category.hierarchy.rightNode.add(-2))
-            .set(category.hierarchy.depth, category.hierarchy.depth.add(1))
-            .set(category.hierarchy.rootCategory, parentCategory.getRootCategory())
-            .where(
-                category.hierarchy.leftNode.gt(parentCategory.getLeftNode())
-                    .and(
-                        category.hierarchy.rightNode.lt(parentCategory.getRightNode())
-                            .and(category.isDeleted.eq(false))
-                    )
-            )
-            .execute()
-    }
-    */
 }
